@@ -22,29 +22,19 @@ for i in range(2,21):
 
 # print(suffix1_1)
 
-# In for loop
+# Helper Functions
 
-txt_files_contents = {}
+def find_string_in_filename(filename):
+    pattern = re.compile(r'synthdata_link-conf-mu-(.*?)_dist-conf-(.*?)_seed-0_ours_coupon_[\w_]+_[\d_]+_eval\.txt')
 
-for s1_1 in suffix1_1:
-    for s1_2 in suffix1_2:
-        for s2  in suffix2:
-            path = Folder_Name_1 + s1_1 + s1_2 + '/' + Folder_Name_2 + s2
-            if os.path.exists(path):
-                entries = os.listdir(path)
-                txt_files = [entry for entry in entries if entry.endswith('.txt')]
-                for file in txt_files:
-                    file_path = os.path.join(path, file)
-                    # print(file_path)
-                with open(file_path, 'r', encoding='utf-8') as file:
-                    # Read the content of the file
-                    content = file.read()
-                    # Store the content with the file name as key
-                    txt_files_contents[file_path] = content
+    match = pattern.search(filename)
+    if match:
+        # Extract string1 and string2 from the file name
+        string1, string2 = match.groups()
+        return string1, string2
 
 
-for file_path, content in txt_files_contents.items():
-    print(f"Contents of {file_path}:")
+def read_content_from_file(content):
     patterns = {
         'precision': r'\$precision\s*\[1\]\s*(\d+\.?\d*)',
         'recall': r'\$recall\s*\[1\]\s*(\d+\.?\d*)',
@@ -59,5 +49,30 @@ for file_path, content in txt_files_contents.items():
         match = re.search(pattern, content)
         if match:
             metrics[metric] = float(match.group(1))
-    print(metrics)
-    print("----------")
+    return metrics
+
+# In for loop
+
+txt_files_contents = {}
+
+for s1_1 in suffix1_1:
+    for s1_2 in suffix1_2:
+        for s2  in suffix2:
+            path = Folder_Name_1 + s1_1 + s1_2 + '/' + Folder_Name_2 + s2
+            if os.path.exists(path):
+                entries = os.listdir(path)
+                txt_files = [entry for entry in entries if entry.endswith('.txt')]
+                for file in txt_files:
+                    s3, s4 = find_string_in_filename(file)
+                    print(file, s3, s4)
+                    file_path = os.path.join(path, file)
+                    with open(file_path, 'r', encoding='utf-8') as file:
+                        # Read the content of the file
+                        content = file.read()
+                        metric = read_content_from_file(content)
+                        print(metric)
+
+
+
+
+
