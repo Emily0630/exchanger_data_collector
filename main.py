@@ -3,6 +3,7 @@
 import pandas
 import os
 import re
+import pandas as pd
 
 # find file
 # read and get file info
@@ -55,6 +56,19 @@ def read_content_from_file(content):
 
 txt_files_contents = {}
 
+entries = []
+# new_entry = {
+#     'round': [],
+#     'split': [],
+#     'replicates': [],
+#     'duplicates': [],
+#     'distortion': [],
+#     'm1': [],
+#     'm2': [],
+#     'm3': []
+# }
+
+
 for s1_1 in suffix1_1:
     for s1_2 in suffix1_2:
         for s2  in suffix2:
@@ -70,9 +84,19 @@ for s1_1 in suffix1_1:
                         # Read the content of the file
                         content = file.read()
                         metric = read_content_from_file(content)
-                        print(metric)
+                        new_entry = {
+                            'round': s1_1,
+                            'split': s1_2,
+                            'replicates': s2,
+                            'duplicates': s3,
+                            'distortion': s4,
+                            'm1': metric['precision'],
+                            'm2': metric['recall'],
+                            'm3': metric['f1score']
+                        }
+                        entries.append(new_entry)
 
-
-
-
+print(len(entries))
+new_entry_df = pd.DataFrame([entries])
+new_entry_df.to_csv("data.csv")
 
