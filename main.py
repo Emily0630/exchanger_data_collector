@@ -56,7 +56,7 @@ def read_content_from_file(content):
 
 txt_files_contents = {}
 
-entries = []
+df_entries = []
 # new_entry = {
 #     'round': [],
 #     'split': [],
@@ -94,9 +94,9 @@ for s1_1 in suffix1_1:
                             'm2': metric['recall'],
                             'm3': metric['f1score']
                         }
-                        entries.append(new_entry)
+                        df_entries.append(new_entry)
 
-print(len(entries))
-new_entry_df = pd.DataFrame([entries])
-new_entry_df.to_csv("data.csv")
+print(len(df_entries))
+entry_df = pd.DataFrame(df_entries)
+entry_df.to_csv("data.csv")
 
