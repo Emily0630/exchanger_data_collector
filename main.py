@@ -18,9 +18,6 @@ suffix1_1 = []
 for i in range(1,13):
     suffix1_1.append("-" + str(i))
 suffix1_2 = ["", "-2"]
-suffix2 = [""]
-for i in range(2,21):
-    suffix2.append("_" + str(i))
 
 # print(suffix1_1)
 
@@ -61,31 +58,29 @@ df_entries = []
 
 for data_size in data_sizes:
     for s1_1 in suffix1_1:
-        for s2  in suffix2:
-            s1_2 = "" if data_size == "10k" else "-2"
-            path = Folder_Name_1 + s1_1 + s1_2 + '/' + Folder_Name_2 + data_size
-            if os.path.exists(path):
-                entries = os.listdir(path)
-                txt_files = [entry for entry in entries if entry.endswith('.txt')]
-                for file in txt_files:
-                    s3, s4 = find_string_in_filename(file)
-                    print(file, s3, s4)
-                    file_path = os.path.join(path, file)
-                    with open(file_path, 'r', encoding='utf-8') as file:
-                        # Read the content of the file
-                        content = file.read()
-                        metric = read_content_from_file(content)
-                        new_entry = {
-                            'round': s1_1,
-                            'split': s1_2,
-                            'replicates': s2,
-                            'duplicates': s3,
-                            'distortion': s4,
-                            'precision': metric['precision'],
-                            'recall': metric['recall'],
-                            'f1score': metric['f1score']
-                        }
-                        df_entries.append(new_entry)
+          s1_2 = "" if data_size == "10k" else "-2"
+          path = Folder_Name_1 + s1_1 + s1_2 + '/' + Folder_Name_2 + data_size
+          if os.path.exists(path):
+              entries = os.listdir(path)
+              txt_files = [entry for entry in entries if entry.endswith('.txt')]
+              for file in txt_files:
+                  s3, s4 = find_string_in_filename(file)
+                  print(file, s3, s4)
+                  file_path = os.path.join(path, file)
+                  with open(file_path, 'r', encoding='utf-8') as file:
+                      # Read the content of the file
+                      content = file.read()
+                      metric = read_content_from_file(content)
+                      new_entry = {
+                          'round': s1_1,
+                          'split': s1_2,
+                          'duplicates': s3,
+                          'distortion': s4,
+                          'precision': metric['precision'],
+                          'recall': metric['recall'],
+                          'f1score': metric['f1score']
+                      }
+                      df_entries.append(new_entry)
 
 print(len(df_entries))
 entry_df = pd.DataFrame(df_entries)
