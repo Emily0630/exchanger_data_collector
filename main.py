@@ -12,8 +12,8 @@ import pandas as pd
 
 # Define paras
 Folder_Name_1 = "../exchanger-experiments"
-Folder_Name_2 = "results_"
-iters = ['10k', '50k']
+Folder_Name_2 = "results_5000records_"
+data_sizes = ["10k", "50k"]
 suffix1_1 = []
 for i in range(1,13):
     suffix1_1.append("-" + str(i))
@@ -58,47 +58,36 @@ def read_content_from_file(content):
 txt_files_contents = {}
 
 df_entries = []
-# new_entry = {
-#     'round': [],
-#     'split': [],
-#     'replicates': [],
-#     'duplicates': [],
-#     'distortion': [],
-#     'm1': [],
-#     'm2': [],
-#     'm3': []
-# }
 
-for num_iter in iters:
+for data_size in data_sizes:
     for s1_1 in suffix1_1:
-        for s1_2 in suffix1_2:
-            for s2  in suffix2:
-                path = Folder_Name_1 + s1_1 + s1_2 + '/' + Folder_Name_2 + num_iter + s2
-                if os.path.exists(path):
-                    entries = os.listdir(path)
-                    txt_files = [entry for entry in entries if entry.endswith('.txt')]
-                    for file in txt_files:
-                        s3, s4 = find_string_in_filename(file)
-                        print(file, s3, s4)
-                        file_path = os.path.join(path, file)
-                        with open(file_path, 'r', encoding='utf-8') as file:
-                            # Read the content of the file
-                            content = file.read()
-                            metric = read_content_from_file(content)
-                            new_entry = {
-                                'round': s1_1,
-                                'split': s1_2,
-                                'iter': num_iter,
-                                'replicates': s2,
-                                'duplicates': s3,
-                                'distortion': s4,
-                                'm1': metric['precision'],
-                                'm2': metric['recall'],
-                                'm3': metric['f1score']
-                            }
-                            df_entries.append(new_entry)
+        for s2  in suffix2:
+            s1_2 = "" if data_size == "10k" else "-2"
+            path = Folder_Name_1 + s1_1 + s1_2 + '/' + Folder_Name_2 + data_size
+            if os.path.exists(path):
+                entries = os.listdir(path)
+                txt_files = [entry for entry in entries if entry.endswith('.txt')]
+                for file in txt_files:
+                    s3, s4 = find_string_in_filename(file)
+                    print(file, s3, s4)
+                    file_path = os.path.join(path, file)
+                    with open(file_path, 'r', encoding='utf-8') as file:
+                        # Read the content of the file
+                        content = file.read()
+                        metric = read_content_from_file(content)
+                        new_entry = {
+                            'round': s1_1,
+                            'split': s1_2,
+                            'replicates': s2,
+                            'duplicates': s3,
+                            'distortion': s4,
+                            'precision': metric['precision'],
+                            'recall': metric['recall'],
+                            'f1score': metric['f1score']
+                        }
+                        df_entries.append(new_entry)
 
 print(len(df_entries))
 entry_df = pd.DataFrame(df_entries)
-entry_df.to_csv("data.csv")
+entry_df.to_csv("data_10k_50k.csv")
 
