@@ -26,13 +26,13 @@ for i in range(21,51):
 # Helper Functions
 
 def find_string_in_filename(filename):
-    pattern = re.compile(r'synthdata_link-conf-mu-(.*?)_dist-conf-(.*?)_seed-0_ours_coupon_[\w_]+_[\d_]+_eval\.txt')
+    pattern = re.compile(r'synthdata_link-conf-mu-(.*?)_dist-conf-(.*?)_seed-0_ours_coupon_[\w_]+_(.*?)_eval\.txt')
 
     match = pattern.search(filename)
     if match:
         # Extract string1 and string2 from the file name
-        string1, string2 = match.groups()
-        return string1, string2
+        string1, string2, date = match.groups()
+        return string1, string2, date
 
 
 def read_content_from_file(content):
@@ -69,15 +69,14 @@ df_entries = []
 # }
 
 for s1_1 in suffix1_1:
+    print(s1_1)
     for s2  in suffix2:
         path = Folder_Name_1 + s1_1 + '/' + Folder_Name_2 + s2
-        print(path)
         if os.path.exists(path):
             entries = os.listdir(path)
             txt_files = [entry for entry in entries if entry.endswith('.txt')]
             for file in txt_files:
-                s3, s4 = find_string_in_filename(file)
-                print(file, s3, s4)
+                s3, s4, date = find_string_in_filename(file)
                 file_path = os.path.join(path, file)
                 with open(file_path, 'r', encoding='utf-8') as file:
                     # Read the content of the file
@@ -90,7 +89,8 @@ for s1_1 in suffix1_1:
                         'distortion': s4,
                         'm1': metric['precision'],
                         'm2': metric['recall'],
-                        'm3': metric['f1score']
+                        'm3': metric['f1score'],
+                        "date": date,
                     }
                     df_entries.append(new_entry)
 
