@@ -85,8 +85,6 @@ for s1_1 in suffix1_1:
                     metric = read_content_from_file(content)
                     new_entry = {
                         'round': s1_1,
-                        'split': s1_2,
-                        'iter': num_iter,
                         'replicates': s2,
                         'duplicates': s3,
                         'distortion': s4,
