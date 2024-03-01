@@ -26,7 +26,7 @@ for i in range(21,51):
 # Helper Functions
 
 def find_string_in_filename(filename):
-    pattern = re.compile(r'synthdata_link-conf-mu-(.*?)_dist-conf-(.*?)_seed-0_ours_coupon_[\w_]+_(.*?)_eval\.txt')
+    pattern = re.compile(r'synthdata_link-conf-mu-(.*?)_dist-conf-(.*?)_seed-0_ours_coupon_(.*?)_eval\.txt')
 
     match = pattern.search(filename)
     if match:
