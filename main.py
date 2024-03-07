@@ -12,14 +12,50 @@ import pandas as pd
 
 # Define paras
 Folder_Name_1 = "../exchanger-experiments"
-Folder_Name_2 = "results_10k_50k"
+Folder_Name_2 = "results_BNBD"
 iters = ['10k', '50k']
-suffix1_1 = []
-for i in range(1,13):
-    suffix1_1.append("-" + str(i))
-suffix2 = []
-for i in range(21,51):
-    suffix2.append("_" + str(i))
+s1_cs2_dic = {
+    1:[1,2,3,4],
+    2:[1,2,3,4],
+    4:[1,2,3,4],
+    5:[1,2],
+    7:[1,2,3,4],
+    8:[1,2],
+    10:[1,2,3,4],
+    11:[1,2],
+}
+s1_cs10_dic = {
+    3:[1,2,3,4,5,6,7,8],
+    5:[3,4],
+    6:[1,2,3,4],
+    8:[3,4],
+    9:[1,2,3,4],
+    11:[3,4],
+    12:[1,2,3,4]
+}
+
+
+
+suffix1_2 = []
+suffix1_10 = []
+for i in s1_cs2_dic:
+    for j in s1_cs2_dic[i]:
+        if j == 1:
+            suffix1_2.append(i)
+        else:
+            suffix1_2.append(f"{i}-{j}")
+for i in s1_cs10_dic:
+    for j in s1_cs10_dic[i]:
+        if j == 1:
+            suffix1_10.append(i)
+        else:
+            suffix1_10.append(f"{i}-{j}")
+
+
+suffix2 = ["10k", "50k"]
+for i in ["10k", "50k"]:
+    for j in range(1, 9):
+        suffix2.append(f"{i}_{j}")
 
 # print(suffix1_1)
 
