@@ -111,8 +111,6 @@ for cluster_size in [2, 10]:
     suffix1 = suffix1_2
     if cluster_size ==10:
         suffix1 = suffix1_10
-    print(len(suffix1))
-    print((suffix1))
     for i1, s1 in enumerate(suffix1):
         if i1 in list(range(8)):
             model = "Both"
@@ -129,7 +127,8 @@ for cluster_size in [2, 10]:
                 num_iter = 10000
             else:
                 num_iter = 50000
-            path = Folder_Name_1 + s1 + '/' + Folder_Name_2 + str(cluster_size) + s2
+            path = Folder_Name_1 + "-" + s1 + '/' + Folder_Name_2 + str(cluster_size) + "_" + s2
+            print(path)
             if os.path.exists(path):
                 entries = os.listdir(path)
                 txt_files = [entry for entry in entries if entry.endswith('.txt')]
