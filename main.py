@@ -12,7 +12,7 @@ import pandas as pd
 
 # Define paras
 Folder_Name_1 = "../exchanger-experiments"
-Folder_Name_2 = "results_BNBD"
+Folder_Name_2 = "results_BNBD_"
 iters = ['10k', '50k']
 s1_cs2_dic = {
     1:[1,2,3,4],
@@ -41,21 +41,24 @@ suffix1_10 = []
 for i in s1_cs2_dic:
     for j in s1_cs2_dic[i]:
         if j == 1:
-            suffix1_2.append(i)
+            suffix1_2.append(f"{i}")
         else:
             suffix1_2.append(f"{i}-{j}")
 for i in s1_cs10_dic:
     for j in s1_cs10_dic[i]:
         if j == 1:
-            suffix1_10.append(i)
+            suffix1_10.append(f"{i}")
         else:
             suffix1_10.append(f"{i}-{j}")
 
 
-suffix2 = ["10k", "50k"]
+suffix2 = []
 for i in ["10k", "50k"]:
     for j in range(1, 9):
-        suffix2.append(f"{i}_{j}")
+        if j == 1:
+            suffix2.append(f"{i}")
+        else:
+            suffix2.append(f"{i}_{j}")
 
 # print(suffix1_1)
 
@@ -104,31 +107,51 @@ df_entries = []
 #     'm3': []
 # }
 
-for s1_1 in suffix1_1:
-    print(s1_1)
-    for s2  in suffix2:
-        path = Folder_Name_1 + s1_1 + '/' + Folder_Name_2 + s2
-        if os.path.exists(path):
-            entries = os.listdir(path)
-            txt_files = [entry for entry in entries if entry.endswith('.txt')]
-            for file in txt_files:
-                s3, s4, date = find_string_in_filename(file)
-                file_path = os.path.join(path, file)
-                with open(file_path, 'r', encoding='utf-8') as file:
-                    # Read the content of the file
-                    content = file.read()
-                    metric = read_content_from_file(content)
-                    new_entry = {
-                        'round': s1_1,
-                        'replicates': s2,
-                        'duplicates': s3,
-                        'distortion': s4,
-                        'm1': metric['precision'],
-                        'm2': metric['recall'],
-                        'm3': metric['f1score'],
-                        "date": date,
-                    }
-                    df_entries.append(new_entry)
+for cluster_size in [2, 10]:
+    suffix1 = suffix1_2
+    if cluster_size ==10:
+        suffix1 = suffix1_10
+    print(len(suffix1))
+    print((suffix1))
+    for i1, s1 in enumerate(suffix1):
+        if i1 in list(range(8)):
+            model = "Both"
+        elif i1 in list(range(8, 14)):
+            model = "No Diri"
+        elif i1 in list(range(14, 20)):
+            model = "None"
+        elif i1 in list(range(20, 26)):
+            model = "No Empirical"
+        else:
+            print("error getting model")
+        for s2 in suffix2:
+            if s2[0] == "1":
+                num_iter = 10000
+            else:
+                num_iter = 50000
+            path = Folder_Name_1 + s1 + '/' + Folder_Name_2 + str(cluster_size) + s2
+            if os.path.exists(path):
+                entries = os.listdir(path)
+                txt_files = [entry for entry in entries if entry.endswith('.txt')]
+                for file in txt_files:
+                    s3, s4, date = find_string_in_filename(file)
+                    file_path = os.path.join(path, file)
+                    with open(file_path, 'r', encoding='utf-8') as file:
+                        # Read the content of the file
+                        content = file.read()
+                        metric = read_content_from_file(content)
+                        new_entry = {
+                            'model': model,
+                            "cluster_size": cluster_size,
+                            "num_iter": num_iter,
+                            'duplicates': s3,
+                            'distortion': s4,
+                            'm1': metric['precision'],
+                            'm2': metric['recall'],
+                            'm3': metric['f1score'],
+                            "date": date,
+                        }
+                        df_entries.append(new_entry)
 
 print(len(df_entries))
 entry_df = pd.DataFrame(df_entries)
