@@ -11,56 +11,14 @@ import pandas as pd
 
 
 # Define paras
-Folder_Name_1 = "../exchanger-experiments"
-Folder_Name_2 = "results_BNBD_"
+Folder_Name_1 = "../exchanger-experiments-"
+Folder_Name_2_list = ["results_5000records_50k","results_5000records_50k_copy"]
 iters = ['10k', '50k']
-s1_cs2_dic = {
-    1:[1,2,3,4],
-    2:[1,2,3,4],
-    4:[1,2,3,4],
-    5:[1,2],
-    7:[1,2,3,4],
-    8:[1,2],
-    10:[1,2,3,4],
-    11:[1,2],
-}
-s1_cs10_dic = {
-    3:[1,2,3,4,5,6,7,8],
-    5:[3,4],
-    6:[1,2,3,4],
-    8:[3,4],
-    9:[1,2,3,4],
-    11:[3,4],
-    12:[1,2,3,4]
-}
+s1_list = [i for i in range(1, 13)]
+s2_list = [""]
+for i in range(2, 5):
+    s2_list.append("-" + str(i))
 
-
-
-suffix1_2 = []
-suffix1_10 = []
-for i in s1_cs2_dic:
-    for j in s1_cs2_dic[i]:
-        if j == 1:
-            suffix1_2.append(f"{i}")
-        else:
-            suffix1_2.append(f"{i}-{j}")
-for i in s1_cs10_dic:
-    for j in s1_cs10_dic[i]:
-        if j == 1:
-            suffix1_10.append(f"{i}")
-        else:
-            suffix1_10.append(f"{i}-{j}")
-
-
-suffix2 = []
-for i in ["10k", "50k"]:
-    for j in range(1, 9):
-        if j == 1:
-            suffix2.append(f"{i}")
-        else:
-            suffix2.append(f"{i}_{j}")
-
-# print(suffix1_1)
 
 # Helper Functions
 
@@ -107,27 +65,26 @@ df_entries = []
 #     'm3': []
 # }
 
-for cluster_size in [2, 10]:
-    suffix1 = suffix1_2
-    if cluster_size ==10:
-        suffix1 = suffix1_10
-    for i1, s1 in enumerate(suffix1):
-        if i1 in list(range(8)):
-            model = "Both"
-        elif i1 in list(range(8, 14)):
-            model = "No Diri"
-        elif i1 in list(range(14, 20)):
-            model = "None"
-        elif i1 in list(range(20, 26)):
-            model = "No Empirical"
-        else:
-            print("error getting model")
-        for s2 in suffix2:
-            if s2[0] == "1":
-                num_iter = 10000
-            else:
-                num_iter = 50000
-            path = Folder_Name_1 + "-" + s1 + '/' + Folder_Name_2 + str(cluster_size) + "_" + s2
+for s1 in s1_list:
+    if s1 % 3 == 1:
+        prior = "Pitman"
+    elif s1 % 3 == 2:
+        prior = "Uniform"
+    elif s1 % 3 == 0:
+        prior = "BNBD4"
+
+    if s1 % 4 == 1:
+        model = "Both"
+    elif s1 % 4 == 2:
+        model = "No Diri"
+    elif s1 % 4 == 3:
+        model = "Neither"
+    elif s1 % 4 == 0:
+        model = "No Empiri"
+
+    for s2 in s2_list:
+        for folder2 in Folder_Name_2_list:
+            path = Folder_Name_1 + str(s1) + s2 + '/' + folder2
             print(path)
             if os.path.exists(path):
                 entries = os.listdir(path)
@@ -141,8 +98,7 @@ for cluster_size in [2, 10]:
                         metric = read_content_from_file(content)
                         new_entry = {
                             'model': model,
-                            "cluster_size": cluster_size,
-                            "num_iter": num_iter,
+                            'prior': prior,
                             'duplicates': s3,
                             'distortion': s4,
                             'm1': metric['precision'],
