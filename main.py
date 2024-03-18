@@ -110,5 +110,5 @@ for s1 in s1_list:
 
 print(len(df_entries))
 entry_df = pd.DataFrame(df_entries)
-entry_df.to_csv("data.csv")
+entry_df.to_csv("data_5k.csv")
 
